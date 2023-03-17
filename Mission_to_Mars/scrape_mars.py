@@ -27,13 +27,12 @@ def scrape():
     # paragraph = div class list_text > div class article_teaser_body
     # create list of dictionaries at the same time
 
-    results = soup.find_all('div', class_='list_text')
-    for result in results:
-        title = result.find(class_='content_title').text
-        paragraph = result.find(class_='article_teaser_body').text
+    results = soup.find('div', class_='list_text')
+    title = results.find(class_='content_title').text
+    paragraph = results.find(class_='article_teaser_body').text
         
-        mars_dict['news_title']=title
-        mars_dict['news_p']=paragraph
+    mars_dict['news_title']=title
+    mars_dict['news_p']=paragraph
 
     #2 # JPL MARS SPACE IMAGE - FEATURED IMAGE
 
@@ -71,7 +70,7 @@ def scrape():
     #send df to html and create html file
     marsClean.to_html(open('marsClean.html','w'))
     mars_dict['fact_table']=marsClean.to_html()
-
+    
     #4 # Mars Hemispheres
 
     url='https://marshemispheres.com/'
@@ -98,21 +97,19 @@ def scrape():
         imagehtml = browser.html
         imageSoup = bs(imagehtml, 'html.parser')
         
-        #we can get the picture elements from downloads
-        imageDownloads = imageSoup.find(class_='downloads')
-        #original image will always be second in the list within the downloads class
-        imageFull = imageDownloads.find_all('li')
-        originalA = imageFull[1].find('a')
-        imageLink = originalA['href']
+        #we can get the picture elements from img class wide-image
+        imageFullRes = imageSoup.find(class_='wide-image')
+        #the second part of this link can be found in the src piece
+        #we need to combine the base url with the partial url for the full link
+        imagePartialLink = imageFullRes['src']
+        imageFullLink = url + imagePartialLink
         
-        hemisphere_image_urls.append({'title':name,'img_url':imageLink})
-        
-        #save image
-        browser.links.find_by_text('Original').click()
+        hemisphere_image_urls.append({'title':name,'img_url':imageFullLink})
         
         browser.back()
 
     mars_dict['hemisphere_images']=hemisphere_image_urls
+    browser.quit()
 
     return mars_dict
 
