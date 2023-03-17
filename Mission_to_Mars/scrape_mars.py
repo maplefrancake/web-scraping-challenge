@@ -32,8 +32,8 @@ def scrape():
         title = result.find(class_='content_title').text
         paragraph = result.find(class_='article_teaser_body').text
         
-        mars_dict{'news_title':title}
-        mars_dict{'news_p':paragraph}
+        mars_dict['news_title']=title
+        mars_dict['news_p']=paragraph
 
     #2 # JPL MARS SPACE IMAGE - FEATURED IMAGE
 
@@ -47,7 +47,7 @@ def scrape():
 
     image = browser.find_by_css('img[class="headerimage fade-in"]')
     featured_image_url = image['src']
-    mars_dict{'featured_image_url':featured_image_url}
+    mars_dict['featured_image_url']=featured_image_url
 
     #3 # MARS FACTS
 
@@ -70,7 +70,7 @@ def scrape():
 
     #send df to html and create html file
     marsClean.to_html(open('marsClean.html','w'))
-    mars_dict{'fact_table':marsClean.to_html()}
+    mars_dict['fact_table']=marsClean.to_html()
 
     #4 # Mars Hemispheres
 
@@ -112,7 +112,7 @@ def scrape():
         
         browser.back()
 
-    mars_dict{'hemisphere_images':hemisphere_image_urls}
+    mars_dict['hemisphere_images']=hemisphere_image_urls
 
     return mars_dict
 
